@@ -20,5 +20,4 @@ Route::get('/getAccountByUserId', 'AccountController@getAccountByUserId');
 Route::get('/getAllAccounts', 'AccountController@getAllAccounts');
 Route::put('/updateAccount', 'AccountController@updateAccount');
 Route::delete('/deleteAccount', 'AccountController@deleteAccount');
-// Route::get('/getAccountById', 'AccountController@getAccountById');
 
