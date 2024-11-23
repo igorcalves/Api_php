@@ -3,6 +3,7 @@ namespace App\Controllers;
 use App\Repository\UserRepository; 
 use App\Utils\UtilityFunctions;
 
+use function App\Utils\connection;
 
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *");
@@ -16,7 +17,7 @@ class UserController {
 
 
     public function __construct() {
-        $this->repository = new UserRepository();
+        $this->repository = new UserRepository(connection());
     }
 
     function getUsers() {

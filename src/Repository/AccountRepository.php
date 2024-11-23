@@ -1,8 +1,8 @@
 <?php
+namespace App\Repository;
 
-namespace accountRepository;
 
-class Account{
+class AccountRepository{
     private $pdo;
 
 
@@ -11,19 +11,10 @@ class Account{
         $this->pdo = $pdo;
     }
 
-    function createAccountByUserId($data){
-        if (!isset($data['user_id'])) {
-            http_response_code(400);
-            echo json_encode(['message' => 'User ID is required']);
-            return;
-        }
-
-        
-        $stmt = $this->pdo->prepare('INSERT INTO account (amount, user_id) values (0 , ?)');
-
-        
+    function createAccountByUserId($userId){
         try {
-            $stmt->bindParam(1,$data['user_id'], \PDO::PARAM_INT);
+            $stmt = $this->pdo->prepare('INSERT INTO account (amount, user_id) values (0 , ?)');
+            $stmt->bindParam(1,$userId, \PDO::PARAM_INT);
             if($stmt->execute()){
                 $accountID = $this->pdo->lastInsertId();
                 $sql = $this->pdo->prepare("SELECT * FROM account WHERE id = ?;");
@@ -38,9 +29,7 @@ class Account{
                     http_response_code(200);
                     echo json_encode(['message'=> 'error while fetch for new account']);
                 }
-
                 
-
             }else{
                 http_response_code(404);
                 echo json_encode(['message' => 'error with execute']);
@@ -53,7 +42,7 @@ class Account{
 
     }
 
-    function getAllAccount(){
+    function getAllAccounts(){
         $sql = 'SELECT * FROM account;';
         try {
             $users = $this->pdo->query($sql)->fetchAll();
@@ -66,17 +55,12 @@ class Account{
         }
     }
 
-    function getAccountByUSerId($data){
-        if (!isset($data['user_id'])) {
-            http_response_code(400);
-            echo json_encode(['message' => 'User ID is required']);
-            return;
-        }
+    function getAccountByUserId($userId){
 
         
         try {
             $stmt = $this->pdo->prepare('SELECT * FROM account WHERE user_id = ?');
-            $stmt->bindParam(1,$data['user_id'], \PDO::PARAM_INT);
+            $stmt->bindParam(1,$userId, \PDO::PARAM_INT);
            if($stmt->execute()){
             $user = $stmt->fetch();
                 if($user){

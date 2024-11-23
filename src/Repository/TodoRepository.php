@@ -12,25 +12,10 @@ class TodoRepository{
     }
 
     function createTodo($data){
-        $requireds = ['user_id', 'title', 'description'];
-        $erros = [];
-        foreach($requireds as $require){
-            if(!array_key_exists($require, $data)){
-                $erros[] = $require;
-            }
-        }
-    
-        if(count($erros) > 0){
-            http_response_code(400);
-            echo json_encode(['missing attributes'=> $erros]);
-            return;
-        }
-
         $stmt = $this->pdo->prepare("INSERT INTO TODO (title, description, user_id) values (?,?,?)");
         $stmt->bindValue(1, $data['title'], \PDO::PARAM_STR);
         $stmt->bindValue(2, $data['description'], \PDO::PARAM_STR);
         $stmt->bindValue(3, $data['user_id'], \PDO::PARAM_STR);
-
 
         try {
             $stmt-> execute();
@@ -67,19 +52,6 @@ class TodoRepository{
     }
 
     function updateTodo($data){
-        $requireds = ['id', 'title', 'description', 'is_complete',];
-        $erros = [];
-        foreach($requireds as $require){
-            if(!array_key_exists($require, $data)){
-                $erros[] = $require;
-            }
-        }
-
-        if(count($erros) > 0){
-            http_response_code(400);
-            echo json_encode(['missing attributes'=> $erros]);
-            return;
-        }
 
         $stmt = $this->pdo->prepare('UPDATE TODO SET title = ?, description = ?, is_complete = ? , updated_at = ? WHERE id = ?');
 
@@ -105,15 +77,11 @@ class TodoRepository{
 
     }
 
-    function deleteTodo($data){
-        if (!isset($data['id'])) {
-            http_response_code(400);
-            echo json_encode(['message' => 'id is required']);
-            return;
-        }
+    function deleteTodo($id){
+
 
         $stmt = $this->pdo->prepare('DELETE FROM TODO WHERE id = ?');
-        $stmt->bindValue(1, $data['id'], \PDO::PARAM_INT);
+        $stmt->bindValue(1, $id, \PDO::PARAM_INT);
         
 
         try {
