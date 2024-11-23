@@ -2,7 +2,6 @@
 
 namespace App\Core;
 
-require_once './vendor/autoload.php';
 
 class Core{
 
@@ -11,8 +10,11 @@ class Core{
     $url = $_SERVER['REQUEST_URI'];
 
     if (preg_match('/^\/api(\/.*)?/', $url, $matches)) {
-        $url = isset($matches[1]) ? $matches[1] : '/';
-    }
+      $url = isset($matches[1]) ? $matches[1] : '/';
+      
+      $parsedUrl = parse_url($url);
+      $url = isset($parsedUrl['path']) ? $parsedUrl['path'] : '/';
+  }
 
     foreach($routes as $route){
       if($route['method'] == $_SERVER['REQUEST_METHOD'] && $route['path'] == $url){
@@ -25,7 +27,6 @@ class Core{
       }
     }
 
-    // Se nenhuma rota for encontrada, exibe uma mensagem de erro
     echo "Rota não encontrada: $url";
   }
 }

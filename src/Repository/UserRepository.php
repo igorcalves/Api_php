@@ -9,9 +9,7 @@ class UserRepository {
     private $pdo;
 
     function __construct() {
-        // connection();
-        // $this->pdo = connection();
-        // echo var_dump(connection());
+           $this->pdo = connection();
         $dsn = "mysql:host=localhost;dbname=api_interview";
         $username = 'root'; 
         $password = 'password'; 
@@ -26,19 +24,7 @@ class UserRepository {
     }
 
     function createUser($data){
-        $requireds = ['name', 'birthday', 'email', 'role'];
-        $erros = [];
-        foreach($requireds as $require){
-            if(!array_key_exists($require, $data)){
-                $erros[] = $require;
-            }
-        }
-    
-        if(count($erros) > 0){
-            http_response_code(400);
-            echo json_encode(['missing attributes'=> $erros]);
-            return;
-        }
+
     
         $stmt = $this->pdo->prepare("INSERT INTO users (name, birthday, email, role) VALUES (?, ?, ?, ?)");
     
@@ -75,17 +61,12 @@ class UserRepository {
          }
     }
 
-    function getUserById($data){
-        if (!isset($data['id'])) {
-            http_response_code(400);
-            echo json_encode(['message' => 'User ID is required']);
-            return;
-        }
+    function getUserById($id){
 
         $stmt = $this->pdo->prepare("SELECT * FROM users u WHERE u.id = ?");
 
         try {
-            $stmt->bindParam(1, $data['id'], \PDO::PARAM_INT);
+            $stmt->bindParam(1, $id, \PDO::PARAM_INT);
         
             if ($stmt->execute()) {
                 $user = $stmt->fetch(); 
@@ -108,12 +89,6 @@ class UserRepository {
     }
 
     function updateUser($data) {
-        if (!isset($data['id'])) {
-            http_response_code(400);
-            echo json_encode(['message' => 'User ID is required']);
-            return;
-        }
-
         $stmt = $this->pdo->prepare("UPDATE users SET name = :name, email = :email, birthday = :birthday, role = :role WHERE id = :id");
 
         try {

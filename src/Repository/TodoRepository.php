@@ -1,5 +1,6 @@
 <?php
-namespace todoRepository;
+namespace App\Repository; 
+
 
 
 class TodoRepository{
@@ -49,17 +50,11 @@ class TodoRepository{
         }
     }
 
-    function getTodoByUserId($data){
-        if (!isset($data['user_id'])) {
-            http_response_code(400);
-            echo json_encode(['message' => 'User_ID is required']);
-            return;
-        }
-
+    function getTodoByUserId($id){
 
         $stmt = $this->pdo->prepare("SELECT * FROM TODO WHERE user_id = ?");
 
-        $stmt->bindValue(1, $data['user_id'], \PDO::PARAM_STR);
+        $stmt->bindValue(1, $id, \PDO::PARAM_STR);
 
         try {
             $stmt->execute();
